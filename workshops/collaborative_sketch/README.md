@@ -247,8 +247,8 @@ Next, we'll want to display the points that we've requested from Firebase, by mo
 function draw () {
   for (const point of points) {
     circle(point.x, point.y, 5)
-    points.splice(points.indexOf(point), 1)
   }
+  points = []
 }
 ```
 
