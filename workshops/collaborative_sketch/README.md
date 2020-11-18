@@ -157,15 +157,15 @@ firebase.initializeApp(firebaseConfig)
 
 const pointsData = firebase.database().ref()
 
-function setup() {}
+function setup () {}
 
-function draw() {}
+function draw () {}
 ```
 
 Then, within the `setup()` function, we'll create a canvas and paint the background. Here, we're creating a 400 by 400 canvas and coloring the background white:
 
 ```js
-function setup() {
+function setup () {
   createCanvas(400, 400)
   background(255)
 }
@@ -174,7 +174,7 @@ function setup() {
 We'll also set the fill to black, so that the ellipses we draw will be filled in black:
 
 ```js
-function setup() {
+function setup () {
   createCanvas(400, 400)
   background(255)
   fill(0)
@@ -189,7 +189,7 @@ Next, we'll create an array to store the points that have been drawn on the canv
 const pointsData = firebase.database().ref()
 const points = []
 
-function setup() {
+function setup () {
   // ...the rest of the setup function
 }
 ```
@@ -197,7 +197,7 @@ function setup() {
 We'll need some way to get data from Firebase and into our `points` array, so let's add a call to Firebase at the end of `setup()`:
 
 ```js
-function setup() {
+function setup () {
   createCanvas(400, 400)
   background(255)
   fill(0)
@@ -227,7 +227,7 @@ const pointsData = firebase.database().ref()
 
 const points = []
 
-function setup() {
+function setup () {
   createCanvas(400, 400)
   background(255)
   fill(0)
@@ -236,7 +236,7 @@ function setup() {
   })
 }
 
-function draw() {}
+function draw () {}
 ```
 
 ### Displaying the Points
@@ -244,7 +244,7 @@ function draw() {}
 Next, we'll want to display the points that we've requested from Firebase, by moving through the `points` array and drawing an ellipse at each point:
 
 ```js
-function draw() {
+function draw () {
   for (const point of points) {
     circle(point.x, point.y, 5)
   }
@@ -254,7 +254,7 @@ function draw() {
 We'll also want to repaint the background at each `draw()` function call, so let's call `background()` before drawing the points:
 
 ```js
-function draw() {
+function draw () {
   background(255)
 
   for (const point of points) {
@@ -270,11 +270,11 @@ Now let's add functionality to be able to click and draw, and have the points th
 We'll first create a function after the draw function that takes the mouse x and y position and pushes that information to Firebase:
 
 ```js
-function draw() {
+function draw () {
   // ...the rest of the draw function
 }
 
-function drawPoint() {
+function drawPoint () {
   pointsData.push({ x: mouseX, y: mouseY })
 }
 ```
@@ -290,8 +290,8 @@ Next, we'll set up our functions to detect clicking and dragging. Normally we wo
 So instead, we'll be detecting mouse activity with one of the canvas's methods. In order to call a method of canvas, we must store our canvas in a variable. Alter the `createCanvas()` line in `setup()`:
 
 ```diff
-- createCanvas(400, 400);
-+ const canvas = createCanvas(400, 400);
+- createCanvas(400, 400)
++ const canvas = createCanvas(400, 400)
 ```
 
 And then we can use the `.mousePressed()` method, and pass in our previously created `drawPoint()` function as an argument. This means that `drawPoint()` will be executed when there is a mouse pressed on the canvas.
@@ -299,7 +299,7 @@ And then we can use the `.mousePressed()` method, and pass in our previously cre
 Type the following at the end of the `setup()` function:
 
 ```js
-function setup() {
+function setup () {
   // ...the rest of the setup function
   pointsData.on('child_added', function (point) {
     points.push(point.val())
@@ -311,10 +311,10 @@ function setup() {
 
 We also want `drawPoint()` to be called when we drag our mouse, but there is no `.mouseDragged()` method. So we'll make our own, out of the `mouseIsPressed` p5.js property, and the canvas method `.mouseMoved()`. If `mouseIsPressed` is true during `.mouseMoved()`, that means our mouse is being dragged!
 
-We can start by adding this beneath `canvas.mousePressed(drawPoint);`:
+We can start by adding this beneath `canvas.mousePressed(drawPoint)`:
 
 ```js
-function setup() {
+function setup () {
   // ...the rest of the setup function
   canvas.mousePressed(drawPoint)
   canvas.mouseMoved(drawPoint)
@@ -326,11 +326,11 @@ That's not _quite_ right, because we want to execute `drawPoint()`, but only if 
 We could write a separate function right under `drawPoint`:
 
 ```js
-function drawPoint() {
+function drawPoint () {
   // ...the rest of the drawPoint function
 }
 
-function drawPointIfMousePressed() {
+function drawPointIfMousePressed () {
   if (mouseIsPressed) {
     drawPoint()
   }
@@ -340,8 +340,8 @@ function drawPointIfMousePressed() {
 And then use it:
 
 ```diff
-- canvas.mouseMoved(drawPoint);
-+ canvas.mouseMoved(drawPointIfMousePressed);
+- canvas.mouseMoved(drawPoint)
++ canvas.mouseMoved(drawPointIfMousePressed)
 ```
 
 Now, if we save and refresh live preview (opened with `preview` > `live preview`), we'll be able to draw stuff. Then, if we link the URL of our external live preview to a friend, we'll be able to see what they're drawing as well! Awesome!
@@ -374,7 +374,7 @@ In our `index.html`, we'll create a sort of control panel, with a `div` containi
 In our `script.js`, we'll create the functionality behind these two buttons, and then attach it to the HTML elements using jQuery. Add this code below everything else in your `script.js`
 
 ```js
-function drawPointIfMousePressed() {
+function drawPointIfMousePressed () {
   if (mouseIsPressed) {
     drawPoint()
   }
@@ -382,17 +382,17 @@ function drawPointIfMousePressed() {
 
 $('#saveDrawing').on('click', saveDrawing)
 
-function saveDrawing() {}
+function saveDrawing () {}
 
 $('#clearDrawing').on('click', clearDrawing)
 
-function clearDrawing() {}
+function clearDrawing () {}
 ```
 
 How do we define these functions? Well, we've already seen how to save our canvas -- using the `saveCanvas()` function offered by p5.js! Let's fill in our `saveDrawing()` function:
 
 ```js
-function saveDrawing() {
+function saveDrawing () {
   saveCanvas()
 }
 ```
@@ -400,7 +400,7 @@ function saveDrawing() {
 And what of our `clearDrawing()` function? Well, first, we should remove everything currently stored in our Firebase app, and then we should wipe our `points` array:
 
 ```js
-function clearDrawing() {
+function clearDrawing () {
   pointsData.remove()
   points = []
 }
@@ -409,7 +409,7 @@ function clearDrawing() {
 Right now other screens won't clear when we remove the drawing from Firebase. To fix this, add the following:
 
 ```js
-function setup() {
+function setup () {
   // ...the rest of the setup function
   pointsData.on('child_added', function (point) {
     points.push(point.val())
