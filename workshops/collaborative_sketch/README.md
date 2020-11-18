@@ -248,7 +248,7 @@ function draw () {
   for (const point of points) {
     circle(point.x, point.y, 5)
   }
-  points = []
+    points.splice(0, points.length)
 }
 ```
 
