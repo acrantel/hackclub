@@ -12,11 +12,11 @@ author: '@jkwok91'
 
 _We recommend going through this workshop in Google Chrome._
 
-Links to a live demo and the final code below. This workshop should take around 1 hour.
+Links to a live demo and the final code below. 
 
-[**Live Demo**](https://collaborative-sketch--prophetorpheus.repl.co)
+[**Serena's Live Demo**](https://StainedAltruisticAddresses.serenali.repl.co)
 
-[**Final Code**](https://repl.it/@prophetorpheus/collaborative-sketch)
+[**Serena's Final Code**]()
 
 ---
 
@@ -43,10 +43,11 @@ Next, clear the contents of `index.html` and put the following in its place:
 And we'll add script tags for Firebase, p5.js, jQuery, and our own `script.js` file within our `body`.
 
 ```html
-<script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-database.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="main.js"></script>
+<script src="script.js"></script>
 ```
 
 ### Setting up the Firebase App
@@ -60,65 +61,52 @@ Now that we're at our dashboard, we'll create our app. Let's head over to our [F
 Let's click on "Add a webapp." We'll copy _part_ of the code snippet and paste it into our `script.js`. Keep in mind your URLs and variables will be different, and that's fine!
 
 ```js
-var config = {
+const firebaseConfig = {
   apiKey: 'AIxaSyGsAkHke9lXEU_97a8rYpMn7gOH3eWDxrM',
   authDomain: 'collaborative-sketch.firebaseapp.com',
   databaseURL: 'https://collaborative-sketch.firebaseio.com',
   storageBucket: 'collaborative-sketch.appspot.com'
 }
-firebase.initializeApp(config)
+firebase.initializeApp(firebaseConfig)
 ```
 
-After copying the code snippet above, head back to Firebase and select the `Auth` tab on the left-hand side. Select `SET UP SIGN-IN METHOD` from the top menu bar, and click `ADD DOMAIN`. Enter `repl.co` and click `ADD`.
+After copying the code snippet above, head back to Firebase and select the `Authentication` tab on the left-hand side. Select `Sign-in method` from the top menu bar, scroll down to `Authorized Domains` and click `Add domain`. Enter `repl.co` and click `Add`.
 
-Next, go to the `Database` tab on the left-hand side. Change the Database type by selecting Drop-Down after the word Database to say "Real-time Database". Within the `Database` tab, we're going to select `Rules`. Here we'll set database permissions for reading and writing to `true`.
+Next, go to the `Realtime Database` tab on the left-hand side. Click `Create Database`. Select `Start in test mode`. 
 
-```json
-{
-  "rules": {
-    ".read": true,
-    ".write": true
-  }
-}
-```
-
-Click `Publish` to save your changes. You should see this warning at the top of your page -- don't worry about it:
-
-![](img/firebase_warning.png)
-
-We'll now head back to our `script.js` file. Below the Firebase configuration, we'll add a variable `pointsData` that we can use to access Firebase.
+We'll now head back to our `script.js` file. Below the Firebase configuration, we'll add a variable `pointsData` that we can use to access Firebase's Realtime Database.
 
 ```js
-firebase.initializeApp(config)
+firebase.initializeApp(firebaseConfig)
 
-var pointsData = firebase.database().ref()
+const pointsData = firebase.database().ref()
 ```
 
 ## Part II: The JS File
 
-At this point, `main.js` looks something like this:
+At this point, `script.js` looks something like this:
 
 ```js
-var config = {
+const firebaseConfig = {
   apiKey: 'AIxaSyGsAkHke9lXEU_97a8rYpMn7gOH3eWDxrM',
   authDomain: 'collaborative-sketch.firebaseapp.com',
   databaseURL: 'https://collaborative-sketch.firebaseio.com',
   storageBucket: 'collaborative-sketch.appspot.com'
 }
-firebase.initializeApp(config)
+firebase.initializeApp(firebaseConfig)
 
-var pointsData = firebase.database().ref()
+const pointsData = firebase.database().ref()
 ```
 
 Let's quickly walk through what a part of this code does. For example:
 
 ```js
-var config = {
+const firebaseConfig = {
   // stuff hidden here for simplicity
 }
 ```
 
-This section of code creates a new `object` in JavaScript named `config`.
+This section of code creates a new `object` in JavaScript named `firebaseConfig`.
 
 **What is a JavaScript Object?**
 
@@ -127,15 +115,15 @@ Take the object closest to you right now, for most of you that might be a cell p
 How would you describe a screen to someone who hasn't seen it before? You can tell them how big that screen is. JavaScript objects are bundles of information stored in this way: a property and a value. What would a JavaScript object of our phone look like?
 
 ```js
-var phone = {
+const phone = {
   screenSize: '5.5 inches'
 }
 ```
 
-See how similar it looks to the `config` object we have in our `main.js`? The `apiKey` is a unique property to _your_ `config` object that lets Firebase know who is accessing your app's database.
+See how similar it looks to the `firebaseConfig` object we have in our `script.js`? The `apiKey` is a unique property to _your_ `firebaseConfig` object that lets Firebase know who is accessing your app's database.
 
 ```js
-var config = {
+const firebaseConfig = {
   apiKey: 'AIxaSyGsAkHke9lXEU_97a8rYpMn7gOH3eWDxrM'
   // ...other stuff
 }
@@ -144,17 +132,17 @@ var config = {
 The first thing we've added to the object is a `property` named `apiKey`, which we assigned a jumbled value of text to. To access this value, we can write:
 
 ```js
-config.apiKey
+firebaseConfig.apiKey
 ```
 
-The `.` is a special character that allows us to look inside of an `object`. This can be used as a shortcut to replacing code, so writing `config.apiKey` is many times equivalent to writing the full jumbled text `"AIxaSyGsAkHke9lXEU_97a8rYpMn7gOH3eWDxrM"`.
+The `.` is a special character that allows us to look inside of an `object`. This can be used as a shortcut to replacing code, so writing `firebaseConfig.apiKey` is many times equivalent to writing the full jumbled text `"AIxaSyGsAkHke9lXEU_97a8rYpMn7gOH3eWDxrM"`.
 
-In the same manner, `config.authDomain` would look inside to the `object` for the value of `authDomain` and become "replaced" by `"collab-draw.firebaseapp.com"`.
+In the same manner, `firebaseConfig.authDomain` would look inside to the `object` for the value of `authDomain` and become "replaced" by `"collab-draw.firebaseapp.com"`.
 
 Can anybody guess what this line replaces?
 
 ```js
-config.databaseURL
+firebaseConfig.databaseURL
 ```
 
 ### Keeping Track of the Points
@@ -162,12 +150,12 @@ config.databaseURL
 Beneath that, we'll add our p5.js functions, `setup()` and `draw()`:
 
 ```js
-var config = {
+const firebaseConfig = {
   // stuff hidden here for simplicity
 }
-firebase.initializeApp(config)
+firebase.initializeApp(firebaseConfig)
 
-var pointsData = firebase.database().ref()
+const pointsData = firebase.database().ref()
 
 function setup() {}
 
@@ -198,8 +186,8 @@ function setup() {
 Next, we'll create an array to store the points that have been drawn on the canvas so far. Let's put this line above the `setup()` function:
 
 ```js
-var pointsData = firebase.database().ref()
-var points = []
+const pointsData = firebase.database().ref()
+const points = []
 
 function setup() {
   // ...the rest of the setup function
@@ -224,20 +212,20 @@ You'll notice that we've created a function at the same time that we're passing 
 
 It would be equivalent if we had declared a function, perhaps named `addPointToPointsArray`, and then passed that in as our argument to `.on()`.
 
-Now our `main.js` should look like this:
+Now our `script.js` should look like this:
 
 ```js
-var config = {
+const firebaseConfig = {
   apiKey: 'AIxaSyGsAkHke9lXEU_97a8rYpMn7gOH3eWDxrM',
   authDomain: 'collaborative-sketch.firebaseapp.com',
   databaseURL: 'https://collaborative-sketch.firebaseio.com',
   storageBucket: 'collaborative-sketch.appspot.com'
 }
-firebase.initializeApp(config)
+firebase.initializeApp(firebaseConfig)
 
-var pointsData = firebase.database().ref()
+const pointsData = firebase.database().ref()
 
-var points = []
+const points = []
 
 function setup() {
   createCanvas(400, 400)
@@ -257,8 +245,7 @@ Next, we'll want to display the points that we've requested from Firebase, by mo
 
 ```js
 function draw() {
-  for (var i = 0; i < points.length; i++) {
-    var point = points[i]
+  for (const point of points) {
     circle(point.x, point.y, 5)
   }
 }
@@ -270,8 +257,7 @@ We'll also want to repaint the background at each `draw()` function call, so let
 function draw() {
   background(255)
 
-  for (var i = 0; i < points.length; i++) {
-    var point = points[i]
+  for (const point of points) {
     circle(point.x, point.y, 5)
   }
 }
@@ -295,6 +281,8 @@ function drawPoint() {
 
 [`mouseX`](https://p5js.org/reference/#p5/mouseX) and [`mouseY`](https://p5js.org/reference/#p5/mouseY) are provided by p5.js.
 
+Firebase [read and write documentation](https://firebase.google.com/docs/database/web/read-and-write)
+
 We don't even have to draw ellipses directly in these functions, because that'll be taken care of by the `.on()` handler that we have in `setup()`, which will get our newly created points from Firebase and add them to the `points` array, which will then be drawn by `draw()`.
 
 Next, we'll set up our functions to detect clicking and dragging. Normally we would use `mousePressed()` and `mouseDragged()`, but we want to restrict the event handling to the canvas. We don't want to send mouse data to Firebase if the clicking isn't happening within the canvas.
@@ -303,7 +291,7 @@ So instead, we'll be detecting mouse activity with one of the canvas's methods. 
 
 ```diff
 - createCanvas(400, 400);
-+ var canvas = createCanvas(400, 400);
++ const canvas = createCanvas(400, 400);
 ```
 
 And then we can use the `.mousePressed()` method, and pass in our previously created `drawPoint()` function as an argument. This means that `drawPoint()` will be executed when there is a mouse pressed on the canvas.
@@ -375,14 +363,15 @@ In our `index.html`, we'll create a sort of control panel, with a `div` containi
     <button id="clearDrawing">DELETE DRAWING</button>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-database.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="main.js"></script>
+  <script src="script.js"></script>
 </body>
 ```
 
-In our `main.js`, we'll create the functionality behind these two buttons, and then attach it to the HTML elements using jQuery. Add this code below everything else in your `main.js`
+In our `script.js`, we'll create the functionality behind these two buttons, and then attach it to the HTML elements using jQuery. Add this code below everything else in your `script.js`
 
 ```js
 function drawPointIfMousePressed() {
