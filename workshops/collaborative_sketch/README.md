@@ -248,18 +248,7 @@ function draw () {
   for (const point of points) {
     circle(point.x, point.y, 5)
   }
-}
-```
-
-We'll also want to repaint the background at each `draw()` function call, so let's call `background()` before drawing the points:
-
-```js
-function draw () {
-  background(255)
-
-  for (const point of points) {
-    circle(point.x, point.y, 5)
-  }
+    points.splice(0, points.length)
 }
 ```
 
